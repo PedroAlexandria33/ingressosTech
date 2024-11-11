@@ -10,7 +10,6 @@ import { useNavigation, type NavigationProp } from '@react-navigation/native'
 import type { RootStackParamList } from '@/types/appNavigatorTypes'
 import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { auth } from '@/server/apiFirebase'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -65,11 +64,11 @@ export default function Home() {
       <StatusBar barStyle="light-content" />
       <Image
         source={require('@/assets/logo.png')}
-        className="h-16"
+        className="h-64"
         resizeMode="contain"
       />
 
-      <View className="w-full mt-12 gap-3">
+      <View className="w-full mt--12 gap-3">
         <Input>
           <MaterialIcons
             name="alternate-email"

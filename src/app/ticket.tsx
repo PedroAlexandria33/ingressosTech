@@ -129,7 +129,7 @@ export default function Ticket() {
             activeOpacity={0.7}
             onPress={() => setShowQRCode(false)}
           >
-            <QRCode value="teste" size={300} />
+            <QRCode value="alguma coisa" size={300} />
             <Text className="text-base text-orange-500 font-bold text-center mt-10">
               Fechar
             </Text>

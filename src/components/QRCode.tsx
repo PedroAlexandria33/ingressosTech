@@ -10,7 +10,7 @@ type Props = {
 export function QRCode({ value, size }: Props) {
   return (
     <QRCodeSvg
-      value={value}
+      value="https://github.com/PedroAlexandria33"
       size={size}
       color={colors.white}
       backgroundColor="transparent"

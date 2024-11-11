@@ -93,11 +93,11 @@ export default function Register() {
       <StatusBar barStyle="light-content" />
       <Image
         source={require('@/assets/logo.png')}
-        className="h-16"
+        className="h-64"
         resizeMode="contain"
       />
 
-      <View className="w-full mt-12 gap-3">
+      <View className="w-full mt--12 gap-3">
         <TouchableOpacity activeOpacity={0.8} className="w-full">
           <View className="w-full h-14 flex-row items-center  gap-3 p-3 border border-green-400 rounded-lg">
             <FontAwesome6 name="calendar" size={20} color={colors.green[200]} />
