@@ -6,13 +6,13 @@ import { initializeAuth } from 'firebase/auth'
 
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: 'AIzaSyC-mRMPU4Mkm3KM47g2Oec3JF1bUtrlYwY',
-  authDomain: 'vaidarcerto-ca4a0.firebaseapp.com',
-  projectId: 'vaidarcerto-ca4a0',
-  storageBucket: 'vaidarcerto-ca4a0.appspot.com',
-  messagingSenderId: '869061276507',
-  appId: '1:869061276507:web:5398398fe79b9dd8bca07e',
-  measurementId: 'G-B45Y1TNCEH',
+  apiKey: ,
+  authDomain: ,
+  projectId: ,
+  storageBucket: ,
+  messagingSenderId: ,
+  appId: ,
+  measurementId: ,
 }
 
 export const app = initializeApp(firebaseConfig)
