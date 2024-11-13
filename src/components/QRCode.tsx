@@ -1,16 +1,27 @@
 import { colors } from '@/styles/colors'
-import React from 'react'
+import { getAuth } from 'firebase/auth'
+import React, { useEffect, useState } from 'react'
 import QRCodeSvg from 'react-native-qrcode-svg'
 
-type Props = {
-  value: string
+interface Props {
   size: number
 }
 
-export function QRCode({ value, size }: Props) {
+export function QRCode({ size }: Props) {
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const auth = getAuth()
+    const currentUser = auth.currentUser
+
+    if (currentUser) {
+      setUserId(currentUser.uid)
+    }
+  }, [])
+
   return (
     <QRCodeSvg
-      value="https://github.com/PedroAlexandria33"
+      value={userId || 'Id não encontrado'}
       size={size}
       color={colors.white}
       backgroundColor="transparent"

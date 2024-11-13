@@ -12,9 +12,18 @@ import { colors } from '@/styles/colors'
 import { useEffect, useState } from 'react'
 import { QRCode } from './QRCode'
 import React from 'react'
-import { collection, query, where, getDocs, limit } from 'firebase/firestore'
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+  doc,
+  getDoc,
+} from 'firebase/firestore'
 import { db } from '@/server/apiFirebase'
 import { MotiView } from 'moti'
+import { Loading } from './loading'
 
 type Participant = {
   nome: string
@@ -46,60 +55,56 @@ export function Credential({
     useState<Participant | null>(null)
 
   useEffect(() => {
-    async function fetchEventData() {
+    async function fetchParticipantAndEvent() {
       try {
-        if (!nomeEvent) {
-          const eventQuery = query(collection(db, 'eventos'), limit(1))
-
-          const eventSnapshot = await getDocs(eventQuery)
-
-          if (!eventSnapshot.empty) {
-            const eventDoc = eventSnapshot.docs[0]
-            const eventId = eventDoc.id
-            const eventNome = eventDoc.data().nomeEvent
-
-            setNomeEvent(eventNome)
-
-            setEventData({
-              nomeEvent: eventNome || 'Nome do evento não disponível',
-              id: eventId,
-            })
-
-            fetchAuthenticatedParticipant(eventId)
-          } else {
-            Alert.alert('Erro', 'Nenhum evento encontrado!')
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error)
-      }
-    }
-
-    async function fetchAuthenticatedParticipant(eventId: string) {
-      try {
+        // 1. Busca o participante autenticado com o email
         const participantsQuery = query(
           collection(db, 'participantes'),
-          where('eventId', '==', eventId),
           where('email', '==', email) // Filtra pelo email autenticado
         )
 
         const participantsSnapshot = await getDocs(participantsQuery)
+
         if (!participantsSnapshot.empty) {
           const participantDoc = participantsSnapshot.docs[0]
-          const data = participantDoc.data()
+          const participantData = participantDoc.data()
+
+          // 2. Extrai o eventId do participante
+          const eventId = participantData.eventId
+
           setAuthenticatedParticipant({
-            nome: data.nome || 'Nome não disponível',
-            email: data.email || 'Email não disponível',
+            nome: participantData.nome || 'Nome não disponível',
+            email: participantData.email || 'Email não disponível',
           })
+
+          // 3. Busca o nome do evento usando o eventId do participante
+          const eventDocRef = doc(db, 'eventos', eventId)
+          const eventDoc = await getDoc(eventDocRef)
+
+          if (eventDoc.exists()) {
+            const eventData = eventDoc.data()
+            setNomeEvent(eventData.nomeEvent || 'Nome do evento não disponível')
+            setEventData({
+              nomeEvent: eventData.nomeEvent || 'Nome do evento não disponível',
+              id: eventId,
+            })
+          } else {
+            Alert.alert('Erro', 'Evento não encontrado para o participante.')
+          }
         } else {
-          console.warn('Participante não encontrado para o email autenticado.')
+          Alert.alert(
+            'Erro',
+            'Participante não encontrado para o email autenticado.'
+          )
         }
       } catch (error) {
-        console.error('Erro ao buscar participante autenticado:', error)
+        console.error('Erro ao buscar dados do participante e evento:', error)
+        Alert.alert('Erro', 'Não foi possível carregar as informações.')
       }
     }
-    fetchEventData()
-  }, [nomeEvent, email])
+
+    fetchParticipantAndEvent()
+  }, [email])
 
   const { height } = useWindowDimensions()
 
@@ -153,11 +158,11 @@ export function Credential({
             </View>
           ) : (
             <View className="w-full flex-row items-center justify-between">
-              <Text className="text-zinc-50 text-sm font-bold mb-6">
-                carregando...
+              <Text className="font-bold text-base text-zinc-300 mt-4 mb-4">
+                carregando <Loading />
               </Text>
-              <Text className="text-zinc-50 text-sm font-bold mb-6">
-                carregando...
+              <Text className="font-bold text-base text-zinc-300 mt-4 mb-4">
+                carregando <Loading />
               </Text>
             </View>
           )}
@@ -178,7 +183,7 @@ export function Credential({
               width: 130,
               height: 130,
               borderRadius: 9999,
-              marginTop: -96,
+              marginTop: -70,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: colors.gray[300],
@@ -199,12 +204,12 @@ export function Credential({
             </Text>
           </View>
         ) : (
-          <Text className="font-regular text-base text-zinc-300 mt-4 mb-4">
-            Carregando informações do participante...
+          <Text className="font-bold text-base text-zinc-300 mt-4 mb-4">
+            carregando <Loading />
           </Text>
         )}
 
-        <QRCode value="teste" size={120} />
+        <QRCode size={120} />
 
         <TouchableOpacity activeOpacity={0.7} onPress={onShowQRCode}>
           <Text className="font-body text-orange-500 text-sm mt-6">

@@ -77,7 +77,7 @@ export default function Register() {
         await vincularUsuarioEvento(user.uid, selectedEvent)
       }
 
-      Alert.alert('Cadastro!', 'Dados do usuário salvos com sucesso!', [
+      Alert.alert('Cadastro!', 'Usuário cadastrado com sucesso!', [
         { text: 'Ok', onPress: () => router.push('/') },
       ])
     } catch (error) {
